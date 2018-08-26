@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Math/Vector3D.h"
-#include <math.h>
 
 namespace LiPhEn {
 	enum class StaticCollisionObjectType {
@@ -12,26 +11,38 @@ namespace LiPhEn {
 	struct StaticCollisionInfo {
 		Vector3D collisionNormal;
 		Vector3D collisionPoint;
+		bool foundCollision;
+	};
+
+	struct ParticleCollisionData {
+		Vector3D position;
+		Vector3D velocity;
+		float radius;
+		float restitutionCoefficient;
+		float frictionCoefficient;
 	};
 
 	class StaticCollisionObject
 	{
-	public:
-		StaticCollisionObject(Vector3D position, StaticCollisionObjectType type = StaticCollisionObjectType::OBSTACLE);
-		~StaticCollisionObject();
-
-        void handleCollisionWithParticle(Vector3D* particlePosition, Vector3D* particleVelocity, float particleRadius, float restitutionCoefficient, float frictionCoefficient) const;
-
-		Vector3D getPosition() const;
-		void setPosition(const Vector3D& position);
-
-        StaticCollisionObjectType getType() const;
-
 	protected:
-		virtual StaticCollisionInfo* detectCollisionWithParticle(const Vector3D& particlePosition, float particleRadius) const = 0;
-        void resolveCollisionWithParticle(Vector3D* particlePosition, Vector3D* particleVelocity, float restitutionCoefficient, float frictionCoefficient, StaticCollisionInfo* collisionInfo) const;
-
 		Vector3D m_position;
 		StaticCollisionObjectType m_type;
+
+	public:
+		explicit StaticCollisionObject(Vector3D position, StaticCollisionObjectType type = StaticCollisionObjectType::OBSTACLE);
+
+		ParticleCollisionData handleCollisionWithParticle(ParticleCollisionData particleData) const;
+
+		Vector3D getPosition() const;
+		StaticCollisionObjectType getType() const;
+
+		void setPosition(const Vector3D& position);
+		void setType(StaticCollisionObjectType type);
+
+	protected:
+		virtual StaticCollisionInfo detectCollisionWithParticle(ParticleCollisionData particleData) const = 0;
+
+	private:
+		ParticleCollisionData resolveCollisionWithParticle(ParticleCollisionData particleData, StaticCollisionInfo collisionInfo) const;
 	};
 }

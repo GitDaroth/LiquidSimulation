@@ -74,7 +74,7 @@ namespace LiPhEn {
 		virtual void handleCollisions();
 		virtual void onEndUpdate();
 
-		void handleCollision(Vector3D* particlePosition, Vector3D* particleVelocity);
+		ParticleCollisionData handleCollision(ParticleCollisionData particleData);
 
 		std::vector<SPHParticle*> m_particles;
 		SPHSpatialGrid m_spatialGrid;

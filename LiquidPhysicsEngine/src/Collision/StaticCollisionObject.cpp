@@ -7,52 +7,55 @@ namespace LiPhEn {
 	{
 	}
 
-	StaticCollisionObject::~StaticCollisionObject()
+	ParticleCollisionData StaticCollisionObject::handleCollisionWithParticle(ParticleCollisionData particleData) const
 	{
-	}
-
-    void StaticCollisionObject::handleCollisionWithParticle(Vector3D* particlePosition, Vector3D* particleVelocity, float particleRadius, float restitutionCoefficient, float frictionCoefficient) const
-	{
-		StaticCollisionInfo* collisionInfo;
-		collisionInfo = detectCollisionWithParticle(*particlePosition, particleRadius);
-		if (collisionInfo != NULL)
+		StaticCollisionInfo collisionInfo = detectCollisionWithParticle(particleData);
+		if (collisionInfo.foundCollision)
 		{
-            resolveCollisionWithParticle(particlePosition, particleVelocity, restitutionCoefficient, frictionCoefficient, collisionInfo);
+			particleData = resolveCollisionWithParticle(particleData, collisionInfo);
 		}
+
+		return particleData;
 	}
 
-    void StaticCollisionObject::resolveCollisionWithParticle(Vector3D* particlePosition, Vector3D* particleVelocity, float restitutionCoefficient, float frictionCoefficient, StaticCollisionInfo* collisionInfo) const
+	ParticleCollisionData StaticCollisionObject::resolveCollisionWithParticle(ParticleCollisionData particleData, StaticCollisionInfo collisionInfo) const
 	{
-		float separatingVelocity = *particleVelocity * collisionInfo->collisionNormal;
+		float separatingVelocity = particleData.velocity * collisionInfo.collisionNormal;
 		// Check if velocity is facing opposite direction of the contactNormal
 		if (separatingVelocity < 0.f)
 		{
-			Vector3D separatingVelocityN = collisionInfo->collisionNormal * separatingVelocity;
-			Vector3D separatingVelocityT = *particleVelocity - separatingVelocityN;
+			Vector3D separatingVelocityN = collisionInfo.collisionNormal * separatingVelocity;
+			Vector3D separatingVelocityT = particleData.velocity - separatingVelocityN;
 			// resolve velocity
-			separatingVelocityN *= -restitutionCoefficient;
-            separatingVelocityT *= frictionCoefficient;
-			*particleVelocity = separatingVelocityN + separatingVelocityT;
+			separatingVelocityN *= -particleData.restitutionCoefficient;
+            separatingVelocityT *= particleData.frictionCoefficient;
+			particleData.velocity = separatingVelocityN + separatingVelocityT;
 		}
-		// resolve position
-		*particlePosition = collisionInfo->collisionPoint;
+		// resolve m_position
+		particleData.position = collisionInfo.collisionPoint;
 
-		delete collisionInfo;
+		return particleData;
 	}
 
-
+	/// GETTERS
 	Vector3D StaticCollisionObject::getPosition() const
 	{
 		return m_position;
 	}
 
+	StaticCollisionObjectType StaticCollisionObject::getType() const
+	{
+		return m_type;
+	}
+
+	/// SETTERS
 	void StaticCollisionObject::setPosition(const Vector3D& position)
 	{
         m_position = position;
     }
 
-    StaticCollisionObjectType StaticCollisionObject::getType() const
-    {
-        return m_type;
-    }
+	void StaticCollisionObject::setType(StaticCollisionObjectType type)
+	{
+		m_type = type;
+	}
 }

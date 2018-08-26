@@ -22,7 +22,7 @@ namespace LiPhEn {
 		{
 			int hashValue = calcHashValue(particle);
 
-			// if no element with the hashValue exists, it inserts a new element and calls the constructor of the value type (std::vector<SPHParticle*>)
+			// if no element with the hashValue exists, it inserts a new element and calls the constructor of the value m_type (std::vector<SPHParticle*>)
 			m_hashedGrid[hashValue].push_back(particle);
 		}
 	}

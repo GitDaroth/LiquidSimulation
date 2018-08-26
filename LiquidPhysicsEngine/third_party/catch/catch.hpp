@@ -1156,7 +1156,7 @@ namespace Catch {
 #endif // CATCH_CONFIG_ENABLE_TUPLE_STRINGMAKER
 
 namespace Catch {
-    struct not_this_one {}; // Tag type for detecting which begin/ end are being selected
+    struct not_this_one {}; // Tag m_type for detecting which begin/ end are being selected
 
     // Import begin/ end from std here so they are considered alongside the fallback (...) overloads in this namespace
     using std::begin;
@@ -1346,7 +1346,7 @@ struct ratio_string<std::milli> {
 #pragma warning(disable:4389) // '==' : signed/unsigned mismatch
 #pragma warning(disable:4018) // more "signed/unsigned mismatch"
 #pragma warning(disable:4312) // Converting int to T* using reinterpret_cast (issue on x64 platform)
-#pragma warning(disable:4180) // qualifier applied to function type has no meaning
+#pragma warning(disable:4180) // qualifier applied to function m_type has no meaning
 #endif
 
 namespace Catch {
@@ -1738,7 +1738,7 @@ namespace Catch {
         } INTERNAL_CATCH_CATCH( catchAssertionHandler ) \
         INTERNAL_CATCH_REACT( catchAssertionHandler ) \
     } while( (void)0, false && static_cast<bool>( !!(__VA_ARGS__) ) ) // the expression here is never evaluated at runtime but it forces the compiler to give it a look
-    // The double negation silences MSVC's C4800 warning, the static_cast forces short-circuit evaluation if the type has overloaded &&.
+    // The double negation silences MSVC's C4800 warning, the static_cast forces short-circuit evaluation if the m_type has overloaded &&.
 
 ///////////////////////////////////////////////////////////////////////////////
 #define INTERNAL_CATCH_IF( macroName, resultDisposition, ... ) \
@@ -2509,7 +2509,7 @@ public:
 } // namespace Generic
 
     // The following functions create the actual matcher objects.
-    // The user has to explicitly specify type to the function, because
+    // The user has to explicitly specify m_type to the function, because
     // infering std::function<bool(T const&)> is hard (but possible) and
     // requires a lot of TMP.
     template<typename T>
@@ -3547,7 +3547,7 @@ namespace Catch {
 
 namespace Catch {
 
-    // An optional type
+    // An optional m_type
     template<typename T>
     class Option {
     public:
@@ -5678,7 +5678,7 @@ namespace Catch { namespace clara { namespace TextFlow {
 namespace Catch { namespace clara {
 namespace detail {
 
-    // Traits for extracting arg and return type of lambdas (for single argument lambdas)
+    // Traits for extracting arg and return m_type of lambdas (for single argument lambdas)
     template<typename L>
     struct UnaryLambdaTraits : UnaryLambdaTraits<decltype( &L::operator() )> {};
 
@@ -5948,7 +5948,7 @@ namespace detail {
         ss << source;
         ss >> target;
         if( ss.fail() )
-            return ParserResult::runtimeError( "Unable to convert '" + source + "' to destination type" );
+            return ParserResult::runtimeError( "Unable to convert '" + source + "' to destination m_type" );
         else
             return ParserResult::ok( ParseResultType::Matched );
     }
@@ -6546,7 +6546,7 @@ using detail::Help;
 // enum of result types from a parse
 using detail::ParseResultType;
 
-// Result type for parser operation
+// Result m_type for parser operation
 using detail::ParserResult;
 
 }} // namespace Catch::clara
@@ -11473,7 +11473,7 @@ namespace {
     }
 
     void XmlWriter::writeStylesheetRef( std::string const& url ) {
-        m_os << "<?xml-stylesheet type=\"text/xsl\" href=\"" << url << "\"?>\n";
+        m_os << "<?xml-stylesheet m_type=\"text/xsl\" href=\"" << url << "\"?>\n";
     }
 
     XmlWriter& XmlWriter::writeBlankLine() {
@@ -12663,7 +12663,7 @@ namespace Catch {
             XmlWriter::ScopedElement e = xml.scopedElement( elementName );
 
             xml.writeAttribute( "message", result.getExpandedExpression() );
-            xml.writeAttribute( "type", result.getTestMacroName() );
+            xml.writeAttribute( "m_type", result.getTestMacroName() );
 
             ReusableStringStream rss;
             if( !result.getMessage().empty() )
@@ -12921,7 +12921,7 @@ namespace Catch {
         if( result.hasExpression() ) {
             m_xml.startElement( "Expression" )
                 .writeAttribute( "success", result.succeeded() )
-                .writeAttribute( "type", result.getTestMacroName() );
+                .writeAttribute( "m_type", result.getTestMacroName() );
 
             writeSourceInfo( result.getSourceInfo() );
 
@@ -12931,7 +12931,7 @@ namespace Catch {
                 .writeText( result.getExpandedExpression() );
         }
 
-        // And... Print a result applicable to each result type.
+        // And... Print a result applicable to each result m_type.
         switch( result.getResultType() ) {
             case ResultWas::ThrewException:
                 m_xml.startElement( "Exception" );
