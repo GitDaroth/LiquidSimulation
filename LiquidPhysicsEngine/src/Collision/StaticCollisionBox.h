@@ -5,17 +5,19 @@
 namespace LiPhEn {
 	class StaticCollisionBox : public StaticCollisionObject
 	{
+	private:
+		Vector3D m_halfDimensions;
+
 	public:
 		StaticCollisionBox(Vector3D position, Vector3D halfDimensions, StaticCollisionObjectType type = StaticCollisionObjectType::OBSTACLE);
-		~StaticCollisionBox();
 
 		Vector3D getHalfDimensions() const;
 		void setHalfDimensions(const Vector3D& halfDimensions);
 
-	protected:
-		virtual StaticCollisionInfo* detectCollisionWithParticle(const Vector3D& particlePosition, float particleRadius) const;
-
-		Vector3D m_halfDimensions;
+	private:
+		virtual StaticCollisionInfo detectCollisionWithParticle(ParticleCollisionData particleData) const;
+		Vector3D calcPenetration(ParticleCollisionData particleData, Vector3D distance) const;
+		StaticCollisionInfo calcCollisionInfo(ParticleCollisionData particleData, Vector3D penetration) const;
 	};
 }
 

@@ -63,7 +63,7 @@ namespace LiPhEn {
 
 			for (int k = 0; k < m_minIterations; k++)
 			{
-				// Predict velocity and position
+				// Predict velocity and m_position
 				for (int i = 0; i < m_particles.size(); i++) {
 					PCISPHParticle* particle = dynamic_cast<PCISPHParticle*>(m_particles[i]);
 					Vector3D halfVelocity = particle->getHalfVelocity();
@@ -83,12 +83,17 @@ namespace LiPhEn {
 				// Resolve collisions
 				for (int i = 0; i < m_particles.size(); i++) {
 					PCISPHParticle* particle = dynamic_cast<PCISPHParticle*>(m_particles[i]);
-					Vector3D positionToResolve = particle->getPredictedPosition();
-					Vector3D velocityToResolve = particle->getPredictedHalfVelocity();
-					handleCollision(&positionToResolve, &velocityToResolve);
 
-					particle->setPredictedPosition(positionToResolve);
-					particle->setPredictedHalfVelocity(velocityToResolve);
+					ParticleCollisionData particleData;
+					particleData.position = particle->getPredictedPosition();
+					particleData.velocity = particle->getPredictedHalfVelocity();
+
+					particleData = handleCollision(particleData);
+
+					particle->setPredictedPosition(particleData.position);
+					particle->setPredictedHalfVelocity(particleData.velocity);
+
+					particle->aproximateVelocity();
 				}
 
 				// Compute pressure from density error

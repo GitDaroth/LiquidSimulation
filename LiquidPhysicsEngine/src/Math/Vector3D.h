@@ -1,7 +1,14 @@
 #pragma once
 
+#include <math.h>
+
 namespace LiPhEn {
 	class Vector3D {
+	private:
+		float m_x;
+		float m_y;
+		float m_z;
+
 	public:
 		Vector3D();
 		Vector3D(const float xyz);
@@ -52,11 +59,6 @@ namespace LiPhEn {
 		Vector3D operator%(const Vector3D &v);
 
 		void clear();
-
-	protected:
-		float m_x;
-		float m_y;
-		float m_z;
 	};
 }
 bool operator==(const LiPhEn::Vector3D &l, const LiPhEn::Vector3D &r);

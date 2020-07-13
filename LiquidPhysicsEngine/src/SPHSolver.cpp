@@ -333,12 +333,15 @@ namespace LiPhEn {
 		{
 			for (int i = 0; i < m_particles.size(); i++) {
 			    SPHParticle* particle = m_particles[i];
-			    Vector3D positionToResolve = particle->getPosition();
-			    Vector3D velocityToResolve = particle->getHalfVelocity();
-			    handleCollision(&positionToResolve, &velocityToResolve);
 
-			    particle->setPosition(positionToResolve);
-			    particle->setHalfVelocity(velocityToResolve);
+			    ParticleCollisionData particleData;
+			    particleData.position = particle->getPosition();
+				particleData.velocity = particle->getHalfVelocity();
+
+				particleData = handleCollision(particleData);
+
+			    particle->setPosition(particleData.position);
+			    particle->setHalfVelocity(particleData.velocity);
 
 			    particle->aproximateVelocity();
 			}
@@ -357,12 +360,18 @@ namespace LiPhEn {
 		}
 	}
 
-	void SPHSolver::handleCollision(Vector3D* particlePosition, Vector3D* particleVelocity)
+	ParticleCollisionData SPHSolver::handleCollision(ParticleCollisionData particleData)
 	{
+		particleData.radius = m_particleRadius;
+		particleData.restitutionCoefficient = m_restitutionCoefficient;
+		particleData.frictionCoefficient = m_frictionCoefficient;
+
 		for (StaticCollisionObject* collisionObject : m_collisionObjects)
 		{
-            collisionObject->handleCollisionWithParticle(particlePosition, particleVelocity, m_particleRadius, m_restitutionCoefficient, m_frictionCoefficient);
+			particleData = collisionObject->handleCollisionWithParticle(particleData);
 		}
+
+		return particleData;
 	}
 
 	void SPHSolver::onEndUpdate()
