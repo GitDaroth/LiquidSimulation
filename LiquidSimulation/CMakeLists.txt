@@ -1,39 +1,88 @@
-cmake_minimum_required(VERSION 3.7.0)
-project(LiquidSimulation VERSION 1.0.0 LANGUAGES CXX)
-
-# Qt specific
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
-# Qt5Core and Qt5Gui is already included in Qt5Widgets
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
+set(CMAKE_PREFIX_PATH "C:\\Qt\\5.15.0\\msvc2019_64\\")
+find_package(Qt5 COMPONENTS Core Widgets Gui REQUIRED)
 
-file (GLOB_RECURSE sources "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-add_executable(LiquidSimulation ${sources})
+set(miscFiles
+	include/LiquidSimulation.h
+	src/LiquidSimulation.cpp
+	include/SPHLiquidWorld.h
+	src/SPHLiquidWorld.cpp
+	include/SPHParticleDrawable.h
+	src/SPHParticleDrawable.cpp
+	include/StaticCollisionObjectDrawable.h
+	src/StaticCollisionObjectDrawable.cpp
+	src/main.cpp)
 
-target_include_directories(LiquidSimulation PUBLIC src)
-target_compile_features(LiquidSimulation PRIVATE cxx_std_14)
-target_link_libraries(LiquidSimulation PUBLIC Qt5::Widgets LiquidPhysicsEngine)
+set(renderingFiles
+	include/Rendering/Camera3D.h
+	src/Rendering/Camera3D.cpp
+	include/Rendering/Mesh.h
+	src/Rendering/Mesh.cpp
+	include/Rendering/OpenGLWidget.h
+	src/Rendering/OpenGLWidget.cpp)
 
-# This runs after every build
-# Copy OpenCL kernels into the build directory
-set (cl_source "${CMAKE_SOURCE_DIR}/LiquidPhysicsEngine/src/OpenCLKernels")
-set (cl_destination "${CMAKE_BINARY_DIR}/LiquidSimulation/cl_kernels")
+set(scenarioFiles
+	include/Scenarios/LiquidScenario.h
+	src/Scenarios/LiquidScenario.cpp
+	include/Scenarios/DamBreakScenario.h
+	src/Scenarios/DamBreakScenario.cpp
+	include/Scenarios/SphereWavesScenario.h
+	src/Scenarios/SphereWavesScenario.cpp
+	include/Scenarios/WaterDropsScenario.h
+	src/Scenarios/WaterDropsScenario.cpp
+	include/Scenarios/WaterfallScenario.h
+	src/Scenarios/WaterfallScenario.cpp
+	include/Scenarios/WaveBreakerScenario.h
+	src/Scenarios/WaveBreakerScenario.cpp)
 
-add_custom_target(CLKernels)
+set(shaderFiles
+	assets/shaders/simplePhong.frag
+	assets/shaders/simplePhong.vert
+	assets/shaders/instancedRendering.vert)
+
+source_group("" FILES ${miscFiles})
+source_group("\\Rendering" FILES ${renderingFiles})
+source_group("\\Scenario" FILES ${scenarioFiles})
+source_group("\\Shader" FILES ${shaderFiles})
+
+add_executable(LiquidSimulation 
+	${miscFiles}
+	${renderingFiles}
+	${scenarioFiles} 
+	${shaderFiles})
+
+target_link_libraries(LiquidSimulation PRIVATE LiquidPhysics Qt5::Core Qt5::Gui Qt5::Widgets)
+target_include_directories(LiquidSimulation PUBLIC "include")
+
+
+add_custom_target(copyAssets)
+set_target_properties(copyAssets PROPERTIES FOLDER PostBuild)
+
+FILE(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/assets" source)
+FILE(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}/assets" destination)
+
 add_custom_command(
-		TARGET CLKernels POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_directory ${cl_source} ${cl_destination})
+	TARGET copyAssets POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${source} ${destination}
+	DEPENDS ${destination}
+	COMMENT "copy assets folder from ${source} to ${destination}")
 
-add_dependencies(LiquidSimulation CLKernels)
+add_dependencies(LiquidSimulation copyAssets)
 
-# Copy shaders into the build direcotry
-set (shaders_source "${CMAKE_SOURCE_DIR}/LiquidSimulation/src/OpenGLShader")
-set (shaders_destination "${CMAKE_BINARY_DIR}/LiquidSimulation/shaders")
 
-add_custom_target(Shaders)
+add_custom_target(copyCLKernels)
+set_target_properties(copyCLKernels PROPERTIES FOLDER PostBuild)
+
+FILE(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/LiquidPhysics/cl_kernels" source)
+FILE(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}/cl_kernels" destination)
+
 add_custom_command(
-		TARGET Shaders POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_directory ${shaders_source} ${shaders_destination})
+	TARGET copyCLKernels POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${source} ${destination}
+	DEPENDS ${destination}
+	COMMENT "copy OpenCL kernels folder from ${source} to ${destination}")
 
-add_dependencies(LiquidSimulation Shaders)
+add_dependencies(LiquidSimulation copyCLKernels)

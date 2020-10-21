@@ -97,8 +97,6 @@ void LiquidSimulation::initializeGraphics()
     m_controlWidget = new QWidget();
     m_controlWidget->setMinimumWidth(400);
 
-    buildControlWidget(m_controlWidget);
-
     m_windowWidget = new QWidget;
     QHBoxLayout* hLayout = new QHBoxLayout(m_windowWidget);
     hLayout->addWidget(m_graphicsWidget, 1);
@@ -118,6 +116,8 @@ void LiquidSimulation::initializeSimulation()
 	m_pcisphSolver = NULL;
 
     m_sphLiquidWorld = new SPHLiquidWorld(m_sphSolver, m_graphicsWidget);
+
+    buildControlWidget(m_controlWidget);
 
     m_scenarios.append(new WaterDropsScenario("Water Drops", m_sphLiquidWorld));
 	m_scenarios.append(new WaterfallScenario("Waterfall", m_sphLiquidWorld));
@@ -246,21 +246,31 @@ void LiquidSimulation::changeSimulationMethod(int index)
 
 void LiquidSimulation::changeParallelization(int index)
 {
-	switch (index)
-	{
-	case 0:
-		m_sphLiquidWorld->getSPHSolver()->setParallelizationType(ParallelizationType::GPU);
-		break;
-
-	default:
-	case 1:
-		m_sphLiquidWorld->getSPHSolver()->setParallelizationType(ParallelizationType::CPU);
-		break;
-
-	case 2:
-		m_sphLiquidWorld->getSPHSolver()->setParallelizationType(ParallelizationType::NONE);
-		break;
-	}
+    if (m_sphLiquidWorld->getSPHSolver()->hasGPU() && m_sphLiquidWorld->getSPHSolver()->hasCPU())
+    {
+        if(index == 0)
+            m_sphLiquidWorld->getSPHSolver()->setParallelizationType(ParallelizationType::GPU);
+        else if (index == 1)
+            m_sphLiquidWorld->getSPHSolver()->setParallelizationType(ParallelizationType::CPU);
+        else
+            m_sphLiquidWorld->getSPHSolver()->setParallelizationType(ParallelizationType::NONE);
+    }
+    else if (m_sphLiquidWorld->getSPHSolver()->hasGPU())
+    {
+        if (index == 0)
+            m_sphLiquidWorld->getSPHSolver()->setParallelizationType(ParallelizationType::GPU);
+        else
+            m_sphLiquidWorld->getSPHSolver()->setParallelizationType(ParallelizationType::NONE);
+    }
+    else if (m_sphLiquidWorld->getSPHSolver()->hasCPU())
+    {
+        if (index == 0)
+            m_sphLiquidWorld->getSPHSolver()->setParallelizationType(ParallelizationType::CPU);
+        else
+            m_sphLiquidWorld->getSPHSolver()->setParallelizationType(ParallelizationType::NONE);
+    }
+    else
+        m_sphLiquidWorld->getSPHSolver()->setParallelizationType(ParallelizationType::NONE);
 }
 
 void LiquidSimulation::setTimeStep(int sliderValue)
@@ -445,8 +455,10 @@ void LiquidSimulation::buildControlWidget(QWidget* parent)
 	QLabel* parallelizationSelectionLabel = new QLabel("Parallelization Selection:");
 	simulationControlsLayout->addWidget(parallelizationSelectionLabel);
 	m_parallelizationSelection = new QComboBox();
-	m_parallelizationSelection->addItem("GPU");
-	m_parallelizationSelection->addItem("CPU");
+    if(m_sphLiquidWorld->getSPHSolver()->hasGPU())
+	    m_parallelizationSelection->addItem("GPU");
+    if (m_sphLiquidWorld->getSPHSolver()->hasCPU())
+	    m_parallelizationSelection->addItem("CPU");
 	m_parallelizationSelection->addItem("NONE");
 	simulationControlsLayout->addWidget(m_parallelizationSelection);
 	connect(m_parallelizationSelection, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) { this->changeParallelization(index); });

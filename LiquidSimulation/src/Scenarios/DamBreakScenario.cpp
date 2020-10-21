@@ -1,4 +1,4 @@
-#include "DamBreakScenario.h"
+#include "Scenarios/DamBreakScenario.h"
 
 DamBreakScenario::DamBreakScenario(QString name, SPHLiquidWorld* sphFluidWorld) :
 	LiquidScenario(name, sphFluidWorld)

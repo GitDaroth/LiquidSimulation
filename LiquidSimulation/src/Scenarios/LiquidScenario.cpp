@@ -1,4 +1,4 @@
-#include "LiquidScenario.h"
+#include "Scenarios/LiquidScenario.h"
 
 LiquidScenario::LiquidScenario(QString name, SPHLiquidWorld* sphLiquidWorld) :
     m_name(name),

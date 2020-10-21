@@ -1,4 +1,4 @@
-#include "WaveBreakerScenario.h"
+#include "Scenarios/WaveBreakerScenario.h"
 
 WaveBreakerScenario::WaveBreakerScenario(QString name, SPHLiquidWorld* sphFluidWorld) :
     LiquidScenario(name, sphFluidWorld)

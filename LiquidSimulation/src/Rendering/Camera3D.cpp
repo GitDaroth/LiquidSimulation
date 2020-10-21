@@ -1,4 +1,4 @@
-#include "Camera3D.h"
+#include "Rendering/Camera3D.h"
 
 Camera3D::Camera3D() :
     Camera3D(800, 600)

@@ -1,5 +1,10 @@
-cmake_minimum_required(VERSION 3.7.0)
-project(LiquidPhysicsProject VERSION 1.0.0 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.17)
 
-add_subdirectory(LiquidPhysicsEngine)
+project(LiquidSimulation 
+	VERSION 0.0.1
+	LANGUAGES CXX)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+add_subdirectory(LiquidPhysics)
 add_subdirectory(LiquidSimulation)

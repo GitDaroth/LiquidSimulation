@@ -1,4 +1,4 @@
-#include "WaterFallScenario.h"
+#include "Scenarios/WaterFallScenario.h"
 
 WaterfallScenario::WaterfallScenario(QString name, SPHLiquidWorld* sphFluidWorld) :
 	LiquidScenario(name, sphFluidWorld)

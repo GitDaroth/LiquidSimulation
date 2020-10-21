@@ -1,4 +1,4 @@
-#include "SphereWavesScenario.h"
+#include "Scenarios/SphereWavesScenario.h"
 
 SphereWavesScenario::SphereWavesScenario(QString name, SPHLiquidWorld* sphFluidWorld) :
 	LiquidScenario(name, sphFluidWorld)

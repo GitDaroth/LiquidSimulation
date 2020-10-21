@@ -1,4 +1,4 @@
-#include "OpenGLWidget.h"
+#include "Rendering/OpenGLWidget.h"
 
 Mesh* InstancedDrawable::mesh;
 
@@ -89,8 +89,8 @@ void OpenGLWidget::initializeGL()
     }
 
     m_instancedShaderProgram = new QOpenGLShaderProgram();
-    m_instancedShaderProgram->addShaderFromSourceFile(QOpenGLShader::Vertex, "shaders/instancedRendering.vert");
-    m_instancedShaderProgram->addShaderFromSourceFile(QOpenGLShader::Fragment, "shaders/simplePhong.frag");
+    m_instancedShaderProgram->addShaderFromSourceFile(QOpenGLShader::Vertex, "assets/shaders/instancedRendering.vert");
+    m_instancedShaderProgram->addShaderFromSourceFile(QOpenGLShader::Fragment, "assets/shaders/simplePhong.frag");
     m_instancedShaderProgram->link();
     m_instancedShaderProgram->bind();
 
@@ -143,8 +143,8 @@ void OpenGLWidget::initializeGL()
 
     // Prepare normal rendering
     m_shaderProgram = new QOpenGLShaderProgram();
-    m_shaderProgram->addShaderFromSourceFile(QOpenGLShader::Vertex, "shaders/simplePhong.vert");
-    m_shaderProgram->addShaderFromSourceFile(QOpenGLShader::Fragment, "shaders/simplePhong.frag");
+    m_shaderProgram->addShaderFromSourceFile(QOpenGLShader::Vertex, "assets/shaders/simplePhong.vert");
+    m_shaderProgram->addShaderFromSourceFile(QOpenGLShader::Fragment, "assets/shaders/simplePhong.frag");
     m_shaderProgram->link();
     m_shaderProgram->bind();
 
