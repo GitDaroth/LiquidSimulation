@@ -1,6 +1,6 @@
 # LiquidSimulation
 Real-time fluid simulation parallelized on a GPU with OpenCL.
-[Video of bacherlor's thesis](https://www.youtube.com/watch?v=2ggfZliqLjA)
+[Video of bachelor's thesis](https://www.youtube.com/watch?v=2ggfZliqLjA)
 
 ![dambreak](/showcase/dambreak.gif)
 ![wavebreaker](/showcase/wavebreaker.gif)
